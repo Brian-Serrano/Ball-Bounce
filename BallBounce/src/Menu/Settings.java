@@ -8,12 +8,13 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import Button.LeftButton1;
-import Button.ButtonMouseListener;
-import Button.MiddleRightButton1;
-import Button.MiddleLeftButton1;
 import Game.Ball;
-import Util.AudioPlayer;
+import Main.Window;
+import Toolbox.LeftButton1;
+import Toolbox.MiddleLeftButton1;
+import Toolbox.MiddleRightButton1;
+import UserInput.ButtonMouseListener;
+import Util.Audio;
 import Util.Image;
 import Util.SaveResources;
 import Util.Variables;
@@ -21,6 +22,7 @@ import Util.Variables;
 public class Settings extends JPanel {
 	private static final long serialVersionUID = 1L;
 	public ButtonMouseListener buttonMouseListener;
+	public Window window;
 	public Image image;
 	public LeftButton1 backButton;
 	public MiddleLeftButton1 previous1, previous2;
@@ -29,23 +31,24 @@ public class Settings extends JPanel {
 	public SaveResources saveResources;
 	public int ballX, ballY, paddleX, paddleY, ballWidth, ballHeight, paddleWidth, paddleHeight;
 	
-	public Settings() {
+	public Settings(Window window, Image image, SaveResources saveResources) {
+		this.window = window;
 		this.backButton = new LeftButton1();
-		this.previous1 = new MiddleLeftButton1(-50);
-		this.previous2 = new MiddleLeftButton1(150);
-		this.next1 = new MiddleRightButton1(-50);
-		this.next2 = new MiddleRightButton1(150);
-		this.saveResources = new SaveResources();
-		this.image = new Image();
-		this.ball = new Ball();
+		this.previous1 = new MiddleLeftButton1(-50, window);
+		this.previous2 = new MiddleLeftButton1(150, window);
+		this.next1 = new MiddleRightButton1(-50, window);
+		this.next2 = new MiddleRightButton1(150, window);
+		this.saveResources = saveResources;
+		this.image = image;
+		this.ball = new Ball(window);
 		this.ballWidth = 50;
 		this.ballHeight = 50;
 		this.paddleWidth = 50 * 2;
 		this.paddleHeight = (50 * 2) / 3;
-		this.ballX = (Variables.WINDOWWIDTH - this.ballWidth) / 2;
-		this.ballY = (Variables.WINDOWHEIGHT - this.ballHeight) / 2;
-		this.paddleX = (Variables.WINDOWWIDTH - this.paddleWidth) / 2;
-		this.paddleY = (Variables.WINDOWHEIGHT - this.paddleHeight) / 2;
+		this.ballX = (window.getWidth() - this.ballWidth) / 2;
+		this.ballY = (window.getHeight() - this.ballHeight) / 2;
+		this.paddleX = (window.getWidth() - this.paddleWidth) / 2;
+		this.paddleY = (window.getHeight() - this.paddleHeight) / 2;
 		this.buttonMouseListener = new ButtonMouseListener(this);
 		this.addMouseListener(buttonMouseListener);
 	}
@@ -54,7 +57,7 @@ public class Settings extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        g2.drawImage(image.backgroundImage, 0, 0, Variables.WINDOWWIDTH, Variables.WINDOWHEIGHT, null);
+        g2.drawImage(image.backgroundImage, 0, 0, window.getWidth(), window.getHeight(), null);
         g2.drawImage(image.previousButton, backButton.x, backButton.y, backButton.width, backButton.height, null);
         g2.drawImage(image.previousButton, previous1.x, previous1.y, previous1.width, previous1.height, null);
         g2.drawImage(image.previousButton, previous2.x, previous2.y, previous2.width, previous2.height, null);
@@ -66,12 +69,12 @@ public class Settings extends JPanel {
         String text1 = "SELECT PADDLE";
         String text2 = "SELECT BALL COLOR";
     	FontMetrics fontMetrics = g2.getFontMetrics();
-    	int settingsX = (Variables.WINDOWWIDTH - fontMetrics.stringWidth(settings)) / 2;
+    	int settingsX = (window.getWidth() - fontMetrics.stringWidth(settings)) / 2;
     	int settingsY = 50;
-        int text1X = (Variables.WINDOWWIDTH - fontMetrics.stringWidth(text1)) / 2;
-        int text1Y = (Variables.WINDOWHEIGHT - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent();
-        int text2X = (Variables.WINDOWWIDTH - fontMetrics.stringWidth(text2)) / 2;
-        int text2Y = (Variables.WINDOWHEIGHT - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent();
+        int text1X = (window.getWidth() - fontMetrics.stringWidth(text1)) / 2;
+        int text1Y = (window.getHeight() - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent();
+        int text2X = (window.getWidth() - fontMetrics.stringWidth(text2)) / 2;
+        int text2Y = (window.getHeight() - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent();
         g2.setColor(new Color(179, 89, 0));
         g2.drawString(settings, settingsX, settingsY);
     	g2.drawString(text1, text1X, text1Y - 120);
@@ -88,7 +91,7 @@ public class Settings extends JPanel {
 	    g2.drawImage(image.paddleImage.get(Variables.selectedPaddle), paddleX, paddleY - 50, paddleWidth, paddleHeight, null);
 	}
 	
-	public void handleClick(int x, int y, AudioPlayer buttonClick) {
+	public void handleClick(int x, int y, Audio buttonClick) {
 		if(x > backButton.x && 
 		   x < backButton.x + backButton.width && 
 		   y > backButton.y && 

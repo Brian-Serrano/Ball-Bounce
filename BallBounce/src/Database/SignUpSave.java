@@ -5,16 +5,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.regex.Pattern;
 
-import Util.SaveResources;
+import Main.Window;
 import Util.ToastMessage;
 import Util.Variables;
 
 public class SignUpSave extends Database {
 	public String username, email, password;
-	public SaveResources saveResources;
+	public Window window;
 	
-	public SignUpSave() {
-		this.saveResources = new SaveResources();
+	public SignUpSave(Window window) {
+		this.window = window;
 	}
 	
 	public boolean noInput() {
@@ -44,22 +44,22 @@ public class SignUpSave extends Database {
 		this.password = password;
 		
 		if(noInput()) {
-			ToastMessage.showToastMessage("No input", 2000);
+			ToastMessage.showToastMessage(window, "No input", 2000);
 			return;
 		}
 		
 		if(invalidLength()) {
-			ToastMessage.showToastMessage("Invalid length", 2000);
+			ToastMessage.showToastMessage(window, "Invalid length", 2000);
 			return;
 		}
 		
 		if(!isValidEmail()) {
-			ToastMessage.showToastMessage("Invalid email", 2000);
+			ToastMessage.showToastMessage(window, "Invalid email", 2000);
 			return;
 		}
 		
 		if(takenCheck()) {
-			ToastMessage.showToastMessage("Username is taken", 2000);
+			ToastMessage.showToastMessage(window, "Username is taken", 2000);
 			return;
 		}
 		
@@ -72,11 +72,11 @@ public class SignUpSave extends Database {
 			ResultSet rs = stmt.executeQuery("SELECT username FROM game WHERE username='" + username + "' OR email='" + email + "';");
 			return rs.next();
 		} catch (ClassNotFoundException e) {
-			ToastMessage.showToastMessage("Failed to connect to database", 2000);
+			ToastMessage.showToastMessage(window, "Failed to connect to database", 2000);
 			e.printStackTrace();
 			return true;
 		} catch (SQLException e) {
-			ToastMessage.showToastMessage("Failed to connect to database", 2000);
+			ToastMessage.showToastMessage(window, "Failed to connect to database", 2000);
 			e.printStackTrace();
 			return true;
 		}
@@ -90,16 +90,15 @@ public class SignUpSave extends Database {
 			if (connect() != null) {
 				Variables.isLoggedIn = true;
 				Variables.username = username;
-				saveResources.saveResources();
 				Variables.selectedPanel = 2;
-				ToastMessage.showToastMessage("Signed up successfully", 2000);
+				ToastMessage.showToastMessage(window, "Signed up successfully", 2000);
 				connect().close();
 			}
 		} catch (ClassNotFoundException e) {
-			ToastMessage.showToastMessage("Failed to connect to database", 2000);
+			ToastMessage.showToastMessage(window, "Failed to connect to database", 2000);
 			e.printStackTrace();
 		} catch (SQLException e) {
-			ToastMessage.showToastMessage("Failed to connect to database", 2000);
+			ToastMessage.showToastMessage(window, "Failed to connect to database", 2000);
 			e.printStackTrace();
 		}
 	}

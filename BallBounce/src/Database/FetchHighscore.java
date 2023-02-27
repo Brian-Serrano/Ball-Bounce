@@ -4,16 +4,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import Main.Window;
 import Util.ToastMessage;
 
 public class FetchHighscore extends Database {
 	public Object[][] data = {{"user", 0}, {"user", 0}, {"user", 0}, {"user", 0}, {"user", 0}};
 	
-	public void fetchHighscore() {
-		query();
+	public void fetchHighscore(Window window) {
+		query(window);
 	}
 	
-	public void query() {
+	public void query(Window window) {
 		try {
 			Statement stmt = connect().createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT username, score FROM game ORDER BY score DESC LIMIT 5;");
@@ -31,10 +32,10 @@ public class FetchHighscore extends Database {
 				connect().close();
 			}
 		} catch (ClassNotFoundException e) {
-			ToastMessage.showToastMessage("Failed to connect to database", 2000);
+			ToastMessage.showToastMessage(window, "Failed to connect to database", 2000);
 			e.printStackTrace();
 		} catch (SQLException e) {
-			ToastMessage.showToastMessage("Failed to connect to database", 2000);
+			ToastMessage.showToastMessage(window, "Failed to connect to database", 2000);
 			e.printStackTrace();
 		}
 	}

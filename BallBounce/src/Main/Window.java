@@ -13,13 +13,15 @@ import Menu.Menu;
 import Menu.Pause;
 import Menu.Settings;
 import Menu.SignUp;
-import Util.AudioPlayer;
+import Util.Audio;
+import Util.Image;
 import Util.SaveResources;
 import Util.Variables;
 
 public class Window extends JFrame {
 	private static final long serialVersionUID = 1L;
 	public SaveResources saveResources;
+	public Image image;
 	public Game game;
 	public Menu menu;
 	public Settings settings;
@@ -30,33 +32,44 @@ public class Window extends JFrame {
 	public FetchHighscore fetchHighscore;
 	public Timer timer;
 	public Insets insets;
-	public AudioPlayer menuSound;
-	public AudioPlayer gameSound;
+	public Audio menuSound;
+	public Audio gameSound;
+	public int originalWidth = 700;
+	public int originalHeight = 500;
 	
 	public Window() {
-		this.setTitle("Ball Bounce");
+		this.setSize(originalWidth, originalHeight);
+		this.image = new Image();
+		this.fetchHighscore = new FetchHighscore();
+		this.saveResources = new SaveResources(this);
+		this.saveResources.fetchResources();
+		this.game = new Game(this, image, saveResources);
+		this.menu = new Menu(this, image);
+		this.settings = new Settings(this, image, saveResources);
+		this.highscore = new Highscore(this, image);
+		this.pause = new Pause(this, image, saveResources);
+		this.signUp = new SignUp(this, image);
+		this.logIn = new LogIn(this, image);
+		this.menuSound = new Audio("assets/Audio/menu_sound.wav");
+		this.gameSound = new Audio("assets/Audio/game_sound.wav");
 		this.setResizable(false);
-		this.setSize(700, 500);
+		this.setTitle("Ball Bounce");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		this.insets = this.getInsets();
-		Variables.window = this;
-		Variables.WINDOWWIDTH = 700 - insets.left - insets.right;
-		Variables.WINDOWHEIGHT = 500 - insets.top - insets.bottom;
-		this.fetchHighscore = new FetchHighscore();
-		this.saveResources = new SaveResources();
-		this.saveResources.fetchResources();
-		this.game = new Game();
-		this.menu = new Menu();
-		this.settings = new Settings();
-		this.highscore = new Highscore();
-		this.pause = new Pause();
-		this.signUp = new SignUp();
-		this.logIn = new LogIn();
-		this.menuSound = new AudioPlayer("assets/Audio/menu_sound.wav");
-		this.gameSound = new AudioPlayer("assets/Audio/game_sound.wav");
-        
+		this.setSize(this.getWidth() + insets.left + insets.right, this.getHeight() + insets.top + insets.bottom);
 	}
+	
+	@Override
+    public int getWidth() {
+        return originalWidth;
+    }
+    
+    @Override
+    public int getHeight() {
+        return originalHeight;
+    }
 	
 	public void animate() {
 		timer = new Timer(16, e -> {
@@ -117,7 +130,7 @@ public class Window extends JFrame {
 	            break;
 	        case 4:
 	            if (Variables.switchToHighscorePanel) {
-	            	fetchHighscore.fetchHighscore();
+	            	fetchHighscore.fetchHighscore(this);
 	                getContentPane().removeAll();
 	                getContentPane().add(highscore);
 	                validate();

@@ -2,17 +2,19 @@ package Game;
 
 import java.awt.Graphics2D;
 
+import Main.Window;
 import Util.Image;
-import Util.Variables;
 
 public class EnemyPaddle {
 	public int x, y, width, height, random;
+	public Window window;
 	
-	public EnemyPaddle() {
+	public EnemyPaddle(Window window) {
+		this.window = window;
 		this.random = (int) (Math.random() * 10);
 		this.width = 90;
 		this.height = 30;
-		this.x = (Variables.WINDOWWIDTH - width) / 2;
+		this.x = (window.getWidth() - width) / 2;
 		this.y = 20;
 	}
 	public void update(Ball ball) {
@@ -20,8 +22,8 @@ public class EnemyPaddle {
 		if (this.x < 0) {
             this.x = 0;
         }
-		if (this.x + this.width > Variables.WINDOWWIDTH) {
-            this.x = Variables.WINDOWWIDTH - this.width;
+		if (this.x + this.width > window.getWidth()) {
+            this.x = window.getWidth() - this.width;
         }
 	}
 	public void draw(Graphics2D g2, Image image) {
